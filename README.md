@@ -13,13 +13,13 @@ Development underway; this package still doesn't work.
 ### Implemented features
 
 * Always return the original `Env` in a production environment.
+* Run debug and production tests.
 
 ### Planned features
 
 * Add `.env` vars to new `Env`.
 * Ignore comments and empty lines.
 * Allow multiline values.
-* Run debug+prod tests in CircleCI.
 
 ## Installation
 
