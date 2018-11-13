@@ -1,17 +1,17 @@
-all: build/dotenv-debug build/dotenv-prod
-
-build/dotenv-debug: build dotenv/*.pony
-	ponyc dotenv -o build -b dotenv-debug --debug
+all: build/dotenv-prod build/dotenv-debug
 
 build/dotenv-prod: build dotenv/*.pony
-	ponyc dotenv -o build -b dotenv-prod
+	ponyc dotenv/test -o build -b dotenv-prod
+
+build/dotenv-debug: build dotenv/*.pony
+	ponyc dotenv/test -o build -b dotenv-debug --debug
 
 build:
 	mkdir build
 
-test: build/dotenv-debug build/dotenv-prod
-	build/dotenv-debug
+test: build/dotenv-prod build/dotenv-debug
 	build/dotenv-prod
+	build/dotenv-debug
 
 clean:
 	rm -rf build
