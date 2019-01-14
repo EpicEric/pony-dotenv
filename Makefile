@@ -1,9 +1,9 @@
 all: build/dotenv-prod build/dotenv-debug
 
-build/dotenv-prod: build dotenv/*.pony
+build/dotenv-prod: build dotenv/*.pony dotenv/test/*.pony
 	ponyc dotenv/test -o build -b dotenv-prod
 
-build/dotenv-debug: build dotenv/*.pony
+build/dotenv-debug: build dotenv/*.pony dotenv/test/*.pony
 	ponyc dotenv/test -o build -b dotenv-debug --debug
 
 build:

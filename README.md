@@ -19,7 +19,7 @@ Development underway; this package still doesn't work.
 
 * Add `.env` vars to new `Env`.
 * Ignore comments and empty lines.
-* Allow multiline values.
+* (?) Allow multiline values.
 
 ## Installation
 

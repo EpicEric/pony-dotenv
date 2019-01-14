@@ -8,4 +8,4 @@ primitive DotEnvSample1 is DotEnvSample
     None
 
   fun apply(): String =>
-    "HELLO=world"
+    "HELLO=world\n\n"

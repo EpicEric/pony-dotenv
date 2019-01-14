@@ -4,7 +4,9 @@ primitive DotEnv
   fun apply(e: Env): Env =>
     ifdef debug then
       try
-        let vars: Array[String] iso = _vars_from_dotenv(e.root as AmbientAuth)?
+        let new_vars: Array[String] iso =
+          _vars_from_dotenv(e.root as AmbientAuth)?
+        let vars: Array[String] iso = _join_vars(e.vars, consume new_vars)
         Env(e.root, e.input, e.out, e.err, e.args, consume vars, e.exitcode)
       else e end
     else e end
@@ -22,5 +24,17 @@ primitive DotEnv
           vars.push(consume line)
         end
       end
+    end
+    consume vars
+
+  fun _join_vars(
+    old_vars: Array[String] box, new_vars: Array[String] box
+  ): Array[String] iso^ =>
+    let vars: Array[String] iso = recover Array[String] end
+    for v in new_vars.values() do
+      vars.push(v)
+    end
+    for v in old_vars.values() do
+      vars.push(v)
     end
     consume vars

@@ -12,6 +12,8 @@ actor Main is TestList
       test(_TestDevDifferentEnvWithFile)
       test(_TestDevChangeVars)
       test(_TestDevDontChangeOtherParams)
+      test(_TestDevContainsOldVars)
+      test(_TestDevContainsNewVars)
     else
       test(_TestProdSameEnv)
     end
@@ -22,6 +24,8 @@ trait _DotEnvUnitTest[A: DotEnvSample] is UnitTest
 
   The generic type specifies which .env sample text to use.
   """
+  fun exclusion_group(): String => "dotenv"
+
   fun ref set_up(h: TestHelper) ? =>
     let auth = h.env.root as AmbientAuth
     let path = ".env"
@@ -48,6 +52,8 @@ class iso _TestProdSameEnv is _DotEnvUnitTest[DotEnvSample1]
 class iso _TestDevSameEnvNoFile is UnitTest
   fun name(): String => "dev/Return same env if .env is missing"
 
+  fun exclusion_group(): String => "dotenv"
+
   fun apply(h: TestHelper) =>
     let env: Env = h.env
     let dotenv: Env = DotEnv(env)
@@ -70,7 +76,7 @@ class iso _TestDevChangeVars is _DotEnvUnitTest[DotEnvSample1]
     h.assert_isnt[Array[String] val](env.vars, dotenv.vars)
 
 class iso _TestDevDontChangeOtherParams is _DotEnvUnitTest[DotEnvSample1]
-  fun name(): String => "dev/New env doesnt change other params"
+  fun name(): String => "dev/New env doesnt change other parameters"
 
   fun apply(h: TestHelper) =>
     let env: Env = h.env
@@ -81,3 +87,25 @@ class iso _TestDevDontChangeOtherParams is _DotEnvUnitTest[DotEnvSample1]
     h.assert_is[OutStream](env.err, dotenv.err)
     h.assert_is[Array[String] val](env.args, dotenv.args)
     h.assert_is[{(I32)} val](env.exitcode, dotenv.exitcode)
+
+class iso _TestDevContainsOldVars is _DotEnvUnitTest[DotEnvSample1]
+  fun name(): String => "dev/New env contains old vars"
+
+  fun apply(h: TestHelper) =>
+    let env: Env = h.env
+    let dotenv: Env = DotEnv(env)
+    for line in env.vars.values() do
+      h.assert_true(dotenv.vars.contains(line))
+    end
+
+class iso _TestDevContainsNewVars is _DotEnvUnitTest[DotEnvSample1]
+  fun name(): String => "dev/New env contains new vars"
+
+  fun apply(h: TestHelper) =>
+    let env: Env = h.env
+    let dotenv: Env = DotEnv(env)
+    for v in DotEnvSample1().split("\n").values() do
+      if v.size() > 0 then
+        h.assert_true(dotenv.vars.contains(v, {(l, r) => l == r }))
+      end
+    end
